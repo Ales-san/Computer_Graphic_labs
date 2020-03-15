@@ -17,8 +17,8 @@ public:
 	PNM_Header(FILE *fin) {
 		char checker;
 		int check = fscanf(fin, "%c%c\n%d %d\n%d\n", &checker, &format, &width, &height, &depth);
-		if (check != 5 || checker != 'P' || format != '5' && format != '6' 
-				|| width <= 0 || height <= 0 || depth != 255) {
+		if (check != 5 || checker != 'P' || format != '5' && format != '6'
+			|| width <= 0 || height <= 0 || depth != 255) {
 			throw exception("Invalid data format!\n");
 		}
 	}
@@ -28,15 +28,16 @@ class PNM_File {
 public:
 	PNM_Header header;
 	vector <unsigned char> data;
-	
+
 	int size = 0;
 	PNM_File() {}
 	PNM_File(FILE *fin) {
 		header = PNM_Header(fin);
-		
+
 		if (header.format == '5') {
 			size = header.width * header.height;
-		} else {
+		}
+		else {
 			size = header.width * header.height * 3;
 		}
 		data.resize(size);
@@ -49,7 +50,7 @@ public:
 
 void inverse(PNM_File &file) {
 	for (int i = 0; i < file.size; i++) {
-		file.data[i] = char(file.header.depth - file.data[i]);
+		file.data[i] = unsigned char(file.header.depth - file.data[i]);
 	}
 }
 
@@ -60,7 +61,7 @@ void vertical_reflection(PNM_File &file) {
 	}
 	for (int i = 0; i < h / 2; i++) {
 		for (int j = 0; j < w; j++) {
-			std::swap(file.data[w * i + j],
+			swap(file.data[w * i + j],
 				file.data[w * (h - i - 1) + j]);
 		}
 	}
@@ -74,7 +75,7 @@ void horisontal_reflection(PNM_File &file) {
 	for (int k = 0; k < factor; k++) {
 		for (int i = 0; i < w / 2; i++) {
 			for (int j = 0; j < h; j++) {
-				std::swap(file.data[(w * j + i) * factor + k],
+				swap(file.data[(w * j + i) * factor + k],
 					file.data[(w * (j + 1) - i - 1) * factor + k]);
 			}
 		}
@@ -97,7 +98,7 @@ void rotate_counter_clockwise(PNM_File &file) {
 		}
 	}
 	file.data = ndata;
-	std::swap(file.header.height, file.header.width);
+	swap(file.header.height, file.header.width);
 }
 
 void rotate_clockwise(PNM_File &file) {
@@ -124,11 +125,13 @@ int main(int argc, char *argv[]) {
 	PNM_File file;
 	try {
 		file = PNM_File(fin);
-	} catch (exception err) {
+	}
+	catch (exception err) {
+		fclose(fin);
 		cout << err.what();
 		return 1;
 	}
-	std::fclose(fin);
+	fclose(fin);
 	switch (argv[3][0] - '0') {
 	case 0:
 		inverse(file);
@@ -157,7 +160,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	fprintf(fout, "P%c\n%d %d\n%d\n", file.header.format, file.header.width, file.header.height, file.header.depth);
-	std::fwrite(&file.data[0], sizeof(unsigned char), file.size, fout);
-	std::fclose(fout);
+	fwrite(&file.data[0], sizeof(unsigned char), file.size, fout);
+	fclose(fout);
 	return 0;
 }
