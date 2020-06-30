@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	}
 	fclose(fin);
 
-	draw_line(file, atoi(argv[3]), atof(argv[4]), Point(atof(argv[5]), atof(argv[6])), Point(atof(argv[7]), atof(argv[8])), (argc == 10 ? atof(argv[9]) : 2.2));
+	draw_line(file, atoi(argv[3]), atof(argv[4]), Point(atof(argv[6]), atof(argv[5])), Point(atof(argv[8]), atof(argv[7])), (argc == 10 ? atof(argv[9]) : 2.2));
 
 	FILE *fout = fopen(argv[2], "wb");
 
