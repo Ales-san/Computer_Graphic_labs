@@ -65,9 +65,21 @@ double do_gamma(double color, double gamma) {
 	return pow(color, gamma);
 }
 
+void centring(Point &a) {
+	if (a.x - int(a.x) <= EPS) {
+		a.x += 0.5;
+	}
+	if (a.y - int(a.y) < EPS) {
+		a.y += 0.5;
+	}
+}
+
 void draw_line(PNM_File &file, int bright, double thick, Point s, Point f, double gamma) {
 	int w = file.header.width;
 	int h = file.header.height;
+
+	centring(s);
+	centring(f);
 
 	Rect rec = get_line(s, f, thick);
 
