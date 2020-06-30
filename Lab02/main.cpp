@@ -14,15 +14,15 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
 	if (argc != 10 && argc != 9) {
-		cout << "Wrong number of arguments!";
+		cerr << "Wrong number of arguments!";
 		return 1;
 	}
 
 	FILE *fin = fopen(argv[1], "rb");
 
 	if (!fin) {
-		cout << "Input file error!\n";
-		cout << argv[1];
+		cerr << "Input file error!\n";
+		cerr << argv[1];
 		return 1;
 	}
 
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	}
 	catch (exception err) {
 		fclose(fin);
-		cout << err.what();
+		cerr << err.what();
 		return 1;
 	}
 	fclose(fin);
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 	FILE *fout = fopen(argv[2], "wb");
 
 	if (!fout) {
-		cout << "Output file error!";
+		cerr << "Output file error!";
 		return 1;
 	}
 	
