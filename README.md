@@ -97,6 +97,6 @@ lab4.exe -f <from_color_space> -t <to_color_space> -i <count> <input_file_name> 
 C++: std::cerr
 
 Следующие параметры гарантировано не будут выходить за обусловленные значения:
-* <count> = 1 или 3;
+* count = 1 или 3;
 * width и height в файле - положительные целые значения;
 * яркостных данных в файле ровно width * height;
