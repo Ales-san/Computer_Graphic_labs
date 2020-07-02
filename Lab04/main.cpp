@@ -13,12 +13,12 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-	if (argc != 11 && argc != 13 && argc != 15) {
+	if (argc != 11) {
 		cerr << "Wrong number of arguments!";
 		return 1;
 	}
 
-	//РѕР±СЂР°Р±РѕС‚РєР° Р°СЂРіСѓРјРµРЅС‚РѕРІ
+	//обработка аргументов
 
 	vector<FILE *>fin;
 	int from = -1;
@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 	map <string, int> space_numbers = { {"RGB", 0}, {"HSL", 1}, {"HSV", 2}, {"YCbCr.601", 3},
 										{"YCbCr.709", 4}, {"YCoCg", 5}, {"CMY", 6} };
 	//RGB - 0, HSL - 1, HSV - 2, YCbCr.601 - 3, YCbCr.709 - 4, YCoCg - 5, CMY - 6
+	string name;
 	for (int i = 1; i < argc;) {
 		switch (argv[i][1]) {
 		case 'f':
@@ -44,8 +45,16 @@ int main(int argc, char *argv[]) {
 			i++;
 			count = atoi(argv[i]);
 			i++;
+			name = argv[i];
+			char buf[1];
 			for (int st = i; i < st + count; i++) {
-				fin.push_back(fopen(argv[i], "rb"));
+				itoa(i - st + 1, buf, 10);
+				string new_name = name;
+				if (count == 3) {
+					new_name.insert(new_name.find_last_of('.'), "_");
+					new_name.insert(new_name.find_last_of('.'), buf);
+				}
+				fin.push_back(fopen(new_name.c_str(), "rb")); 
 				if (!fin[i - st]) {
 					cerr << "Input file error!\n";
 					cerr << argv[i] << '\n';
@@ -66,7 +75,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ PNM-С„Р°Р№Р»РѕРІ
+	//инициализация PNM-файлов
 
 	vector<PNM_File> files(count);
 	for (int i = 0; i < count; i++) {
@@ -81,11 +90,11 @@ int main(int argc, char *argv[]) {
 		fclose(fin[i]);
 	}
 
-	//РїРµСЂРµС…РѕРґ РІ РґСЂСѓРіРѕРµ С†РІРµС‚РѕРІРѕРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ
+	//переход в другое цветовое пространство
 	
 	convert(files, from, to);
 
-	//СЃС‡РёС‚РєР° Рё РѕС‚РєСЂС‹С‚РёРµ РІС‹С…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ
+	//считка и открытие выходных файлов
 
 	vector <FILE *> fout;
 	for (int i = 1; i < argc;) {
@@ -93,21 +102,30 @@ int main(int argc, char *argv[]) {
 			i++;
 			count = atoi(argv[i]);
 			i++;
+			string name = argv[i];
+			char buf[1];
 			for (int st = i; i < st + count; i++) {
-				fout.push_back(fopen(argv[i], "wb"));
+				itoa(i - st + 1, buf, 10);
+				string new_name = name;
+				if (count == 3) {
+					new_name.insert(new_name.find_last_of('.'), "_");
+					new_name.insert(new_name.find_last_of('.'), buf);
+				}
+				fout.push_back(fopen(new_name.c_str(), "wb"));
 				if (!fout[i - st]) {
 					cerr << "Output file error!\n";
 					cerr << argv[i] << '\n';
 					return 1;
 				}
 			}
+			
 		} else {
 			i++;
 		}
 	}
 
 	vector <PNM_File> res;
-	//Р·Р°РїРёСЃСЊ Рё Р·Р°РєСЂС‹С‚РёРµ РІС‹С…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ
+	//запись и закрытие выходных файлов
 	if (count != files.size()) {
 		if (count == 3) {
 			res.push_back(PNM_File(files[0], 0));
