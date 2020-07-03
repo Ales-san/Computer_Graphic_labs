@@ -74,6 +74,9 @@ double get_ker(double bright, std::vector<double> ring, std::vector<double> circ
 void cas(PNM_File &file, double sharpen) {
 	int h = file.header.height;
 	int w = file.header.width;
+	PNM_File res;
+	res.header = file.header;
+	res.data.resize(file.size);
 	std::pair<int, int> shift_circle[] = { {-1, -1}, {-1, 1}, {1, -1}, {1, 1} };
 	std::pair<int, int> shift_ring[] = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} };
 	for (int i = 0; i < h; i++) {
@@ -130,7 +133,8 @@ void cas(PNM_File &file, double sharpen) {
 			new_color.b = round(new_color.b * 255);
 			new_color.c = round(new_color.c * 255);
 
-			write_component(file, i, j, new_color);
+			write_component(res, i, j, new_color);
 		}
 	}
+	file.data.swap(res.data);
 }
