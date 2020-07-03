@@ -68,34 +68,27 @@ void to_HSV(std::vector<PNM_File> &files) {
 			component new_color;
 			new_color.c = std::max(color.a, std::max(color.b, color.c));
 			double sub = new_color.c - std::min(color.a, std::min(color.b, color.c));
+			if (sub == 0) {
+				new_color.a = 0;
+			} else if(abs(new_color.c - color.a) < EPS){
+				new_color.a = (color.b - color.c) / sub;
+			} else if (abs(new_color.c - color.b) < EPS) {
+				new_color.a = (color.c - color.a) / sub + 2;
+			} else {
+				new_color.a = (color.a - color.b) / sub + 4;
+			}
+			new_color.a *= 60.;
+			if (new_color.a < 0) {
+				new_color.a += 360;
+			}
 			if (new_color.c == 0) {
 				new_color.b = 0;
 			} else {
 				new_color.b = sub / new_color.c;
 			}
-			if (new_color.b == 0) {
-				new_color.a = 0;
-			} else {
-				double Cr = (new_color.c - color.a) / sub;
-				double Cg = (new_color.c - color.b) / sub;
-				double Cb = (new_color.c - color.c) / sub;
-				if (abs(color.a - new_color.c) < EPS) {
-					new_color.a = Cb - Cg;
-				}
-				if (abs(color.b - new_color.c) < EPS) {
-					new_color.a = 2 + Cr - Cb;
-				}
-				if (abs(color.c - new_color.c) < EPS) {
-					new_color.a = 4 + Cg - Cr;
-				}
-				new_color.a *= 60;
-				if (new_color.a < 0 && new_color.a != -INF) {
-					new_color.a += 360;
-				}
-			}
 			new_color.a = round(new_color.a / 360 * 255);
-			new_color.b = round(new_color.b * 100);
-			new_color.c = round(new_color.c * 100);
+			new_color.b = round(new_color.b * 255);
+			new_color.c = round(new_color.c * 255);
 			write_component(files, j, k, new_color);
 		}
 	}
@@ -110,8 +103,6 @@ void from_HSV(std::vector<PNM_File> &files) {
 			component color;
 			color = get_component(files, j, k);
 			color.a *= 360;
-			color.b *= 2.55;
-			color.c *= 2.55;
 
 			component new_color;
 			double mul = color.b * color.c;
