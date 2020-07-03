@@ -18,8 +18,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	//обработка аргументов
-
 	vector<FILE *>fin;
 	int from = -1;
 	int to = -1;
@@ -46,18 +44,24 @@ int main(int argc, char *argv[]) {
 			count = atoi(argv[i]);
 			i++;
 			name = argv[i];
-			char buf[1];
-			for (int st = i; i < st + count; i++) {
-				itoa(i - st + 1, buf, 10);
+			//char buf[1];
+			i++;
+			for (int j = 0; j < count; j++) {
+				//itoa(i - st + 1, , 10);
 				string new_name = name;
 				if (count == 3) {
 					new_name.insert(new_name.find_last_of('.'), "_");
-					new_name.insert(new_name.find_last_of('.'), buf);
+					new_name.insert(new_name.find_last_of('.'), to_string(j + 1));
 				}
-				fin.push_back(fopen(new_name.c_str(), "rb")); 
-				if (!fin[i - st]) {
+				fin.push_back(fopen(new_name.c_str(), "rb"));
+				if (!fin[j]) {
+					for (int k = 0; k < 3; k++) {
+						if (fin[k]) {
+							fclose(fin[k]);
+						}
+					}
 					cerr << "Input file error!\n";
-					cerr << argv[i] << '\n';
+					cerr << new_name << '\n';
 					return 1;
 				}
 			}
@@ -66,16 +70,14 @@ int main(int argc, char *argv[]) {
 			i++;
 			num = atoi(argv[i]);
 			i++;
-			i += num;
+			i++;
 			break;
 		default:
 			cerr << "Wrong operation!";
 			return 1;
-			
+
 		}
 	}
-
-	//инициализация PNM-файлов
 
 	vector<PNM_File> files(count);
 	for (int i = 0; i < count; i++) {
@@ -90,11 +92,7 @@ int main(int argc, char *argv[]) {
 		fclose(fin[i]);
 	}
 
-	//переход в другое цветовое пространство
-	
 	convert(files, from, to);
-
-	//считка и открытие выходных файлов
 
 	vector <FILE *> fout;
 	for (int i = 1; i < argc;) {
@@ -103,38 +101,46 @@ int main(int argc, char *argv[]) {
 			count = atoi(argv[i]);
 			i++;
 			string name = argv[i];
-			char buf[1];
-			for (int st = i; i < st + count; i++) {
-				itoa(i - st + 1, buf, 10);
+			i++;
+			for (int j = 0; j < count; j++) {
+				//itoa(i - st + 1, buf, 10);
 				string new_name = name;
 				if (count == 3) {
 					new_name.insert(new_name.find_last_of('.'), "_");
-					new_name.insert(new_name.find_last_of('.'), buf);
+					new_name.insert(new_name.find_last_of('.'), to_string(j + 1));
 				}
 				fout.push_back(fopen(new_name.c_str(), "wb"));
-				if (!fout[i - st]) {
+				if (!fout[j]) {
+					for (int k = 0; k < 3; k++) {
+						if (fout[k]) {
+							fclose(fout[k]);
+						}
+					}
 					cerr << "Output file error!\n";
 					cerr << argv[i] << '\n';
 					return 1;
 				}
 			}
-			
-		} else {
+
+		}
+		else {
 			i++;
 		}
 	}
 
 	vector <PNM_File> res;
-	//запись и закрытие выходных файлов
+
 	if (count != files.size()) {
 		if (count == 3) {
 			res.push_back(PNM_File(files[0], 0));
 			res.push_back(PNM_File(files[0], 1));
 			res.push_back(PNM_File(files[0], 2));
-		} else {
+		}
+		else {
 			res.push_back(PNM_File(files));
 		}
-	} else {
+	}
+	else {
 		res = files;
 	}
 	for (int i = 0; i < count; i++) {

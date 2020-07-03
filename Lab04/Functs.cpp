@@ -342,15 +342,9 @@ void to_YCoCg(std::vector<PNM_File> &files) {
 			
 			new_color.a = 0.25 * color.a + 0.5 * color.b + 0.25 * color.c;
 			new_color.b = 0.5 * color.a - 0.5 * color.c;
-			new_color.a = -0.25 * color.a + 0.5 * color.b - 0.25 * color.c;
+			new_color.c = -0.25 * color.a + 0.5 * color.b - 0.25 * color.c;
 
-			if (new_color.a < 0) {
-				new_color.a = 0;
-			}
-
-			if (new_color.a > 1) {
-				new_color.a = 1;
-			}
+			check_borders(new_color.a);
 
 			new_color.a = round(new_color.a * 255);
 			new_color.b = round((new_color.b + 0.5) * 255);
@@ -377,7 +371,11 @@ void from_YCoCg(std::vector<PNM_File> &files) {
 
 			new_color.a = color.a + color.b - color.c;
 			new_color.b = color.a + color.c;
-			new_color.a = color.a - color.b - color.c;
+			new_color.c = color.a - color.b - color.c;
+
+			check_borders(new_color.a);
+			check_borders(new_color.b);
+			check_borders(new_color.c);
 
 			new_color.a = round(new_color.a * 255);
 			new_color.b = round(new_color.b * 255);
