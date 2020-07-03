@@ -70,10 +70,10 @@ width и height в файле - положительные целые значе
 Программа должна быть написана на C/C++ и не использовать внешние библиотеки.
 
 Аргументы передаются через командную строку:
-lab4.exe -f <from_color_space> -t <to_color_space> -i <count> <input_file_name> -o <count> <output_file_name>,
+lab4.exe -f <from_color_space> -t <to_color_space> -i <number_of_files> <input_file_name> -o <number_of_files> <output_file_name>,
 где
 * <color_space> - RGB / HSL / HSV / YCbCr.601 / YCbCr.709 / YCoCg / CMY
-* count = 1 или 3
+* <number_of_files> = 1 или 3
 * <file_name>:
 для count=1 просто имя файла; формат ppm
 для count=3 шаблон имени вида <name.ext>, что соответствует файлам <name_1.ext>, <name_2.ext> и <name_3.ext> для каждого канала соответственно; формат pgm
@@ -97,7 +97,7 @@ lab4.exe -f <from_color_space> -t <to_color_space> -i <count> <input_file_name> 
 C++: std::cerr
 
 Следующие параметры гарантировано не будут выходить за обусловленные значения:
-* count = 1 или 3;
+* <number_of_files> = 1 или 3;
 * width и height в файле - положительные целые значения;
 * яркостных данных в файле ровно width * height;
 ***
@@ -109,8 +109,8 @@ C++: std::cerr
 ###### Важно: Помимо реализации будет оцениваться изложение теории, представленной в отчете. Без раскрытия теоретического материала решение засчитано не будет. ######
 
 Аргументы передаются через командную строку:
-lab7.exe /<input> /<output> <sharpen>,
-где sharpen - параметр резкости в диапазоне [0..1] (вещественное значение).
+lab7.exe <input_file_name> <output_file_name> <sharpen>,
+где <sharpen> - параметр резкости в диапазоне [0..1] (вещественное значение).
 Входные/выходные данные: PNM P5 или P6 (RGB).
  
 ###### Полное решение: ######
